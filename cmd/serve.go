@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/davebehr1/anonymous-chat/pkg"
 	"github.com/davebehr1/anonymous-chat/pkg/websocket"
@@ -12,15 +13,18 @@ import (
 )
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, redisClient *redis.Client) {
-	fmt.Println("WebSocket Endpoint Hit")
+	user := strings.TrimPrefix(r.URL.Path, "/chat/")
+
+	fmt.Println("WebSocket Endpoint Hit", user)
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
 		fmt.Fprintf(w, "%+v\n", err)
 	}
 
 	client := &websocket.Client{
-		Conn: conn,
-		Pool: pool,
+		Conn:     conn,
+		Pool:     pool,
+		Username: user,
 	}
 
 	pool.Register <- client
@@ -31,7 +35,10 @@ func setupRoutes(redisClient *redis.Client) {
 	pool := websocket.NewPool(redisClient)
 	go pool.Start()
 
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
+		rw.Write([]byte("you are good to go!"))
+	})
+	http.HandleFunc("/chat/", func(w http.ResponseWriter, r *http.Request) {
 		// surveyID := r.URL.Query()["username"]
 		// fmt.Println(surveyID)
 		serveWs(pool, w, r, redisClient)

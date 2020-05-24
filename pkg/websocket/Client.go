@@ -9,9 +9,10 @@ import (
 )
 
 type Client struct {
-	ID   string
-	Conn *websocket.Conn
-	Pool *Pool
+	ID       string
+	Conn     *websocket.Conn
+	Pool     *Pool
+	Username string
 }
 
 type Message struct {
