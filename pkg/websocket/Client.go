@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/go-redis/redis"
 	"github.com/gorilla/websocket"
 )
 
@@ -18,7 +19,7 @@ type Message struct {
 	Body string `json:"body"`
 }
 
-func (c *Client) Read() {
+func (c *Client) Read(redisClient *redis.Client) {
 	defer func() {
 		c.Pool.Unregister <- c
 		c.Conn.Close()
@@ -31,9 +32,12 @@ func (c *Client) Read() {
 			return
 		}
 		message := Message{Type: messageType, Body: string(p)}
-		c.Pool.Broadcast <- message
-		fmt.Printf("Message Recieved: %+v\n", message)
+		err = redisClient.Publish(channel, string(p)).Err()
+		if err != nil {
+			log.Println("could not publish to channel", err)
+		}
 
+		// c.Pool.Broadcast <- message
+		fmt.Printf("Message Received: %+v\n", message)
 	}
-
 }

@@ -1,5 +1,5 @@
 // api/index.js
-var socket = new WebSocket("ws://localhost:8080/ws");
+var socket = new WebSocket("ws://localhost:5000/ws");
 
 let connect = (cb) => {
   console.log("Attempting Connection...");

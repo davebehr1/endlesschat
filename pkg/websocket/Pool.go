@@ -2,21 +2,27 @@ package websocket
 
 import (
 	"fmt"
+
+	"github.com/go-redis/redis"
 )
+
+const channel = "chat"
 
 type Pool struct {
 	Register   chan *Client
 	Unregister chan *Client
 	Clients    map[*Client]bool
-	Broadcast  chan Message
+	Broadcast  <-chan *redis.Message
 }
 
-func NewPool() *Pool {
+func NewPool(redisClient *redis.Client) *Pool {
+	sub := redisClient.Subscribe(channel)
+	messages := sub.Channel()
 	return &Pool{
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Clients:    make(map[*Client]bool),
-		Broadcast:  make(chan Message),
+		Broadcast:  messages,
 	}
 }
 
@@ -25,7 +31,7 @@ func (pool *Pool) Start() {
 		select {
 		case client := <-pool.Register:
 			pool.Clients[client] = true
-			fmt.Println("Size of Connection Pool:", len(pool.Clients))
+			fmt.Println("Size of Connection Pool: ", len(pool.Clients))
 			for client, _ := range pool.Clients {
 				fmt.Println(client)
 				client.Conn.WriteJSON(Message{Type: 1, Body: "New User Joined..."})
@@ -33,13 +39,13 @@ func (pool *Pool) Start() {
 			break
 		case client := <-pool.Unregister:
 			delete(pool.Clients, client)
-			fmt.Println("Size of connection Pool:", len(pool.Clients))
+			fmt.Println("Size of Connection Pool: ", len(pool.Clients))
 			for client, _ := range pool.Clients {
 				client.Conn.WriteJSON(Message{Type: 1, Body: "User Disconnected..."})
 			}
 			break
 		case message := <-pool.Broadcast:
-			fmt.Println("Sending a message to all clients in the Pool")
+			fmt.Println("Sending message to all clients in Pool")
 			for client, _ := range pool.Clients {
 				if err := client.Conn.WriteJSON(message); err != nil {
 					fmt.Println(err)
