@@ -32,6 +32,8 @@ func setupRoutes(redisClient *redis.Client) {
 	go pool.Start()
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		// surveyID := r.URL.Query()["username"]
+		// fmt.Println(surveyID)
 		serveWs(pool, w, r, redisClient)
 	})
 }

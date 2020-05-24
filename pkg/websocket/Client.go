@@ -20,6 +20,7 @@ type Message struct {
 }
 
 func (c *Client) Read(redisClient *redis.Client) {
+
 	defer func() {
 		c.Pool.Unregister <- c
 		c.Conn.Close()

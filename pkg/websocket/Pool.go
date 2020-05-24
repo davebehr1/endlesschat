@@ -9,24 +9,27 @@ import (
 const channel = "chat"
 
 type Pool struct {
-	Register   chan *Client
-	Unregister chan *Client
-	Clients    map[*Client]bool
-	Broadcast  <-chan *redis.Message
+	Register    chan *Client
+	Unregister  chan *Client
+	Clients     map[*Client]bool
+	Broadcast   <-chan *redis.Message
+	RedisClient *redis.Client
 }
 
 func NewPool(redisClient *redis.Client) *Pool {
 	sub := redisClient.Subscribe(channel)
 	messages := sub.Channel()
 	return &Pool{
-		Register:   make(chan *Client),
-		Unregister: make(chan *Client),
-		Clients:    make(map[*Client]bool),
-		Broadcast:  messages,
+		Register:    make(chan *Client),
+		Unregister:  make(chan *Client),
+		Clients:     make(map[*Client]bool),
+		Broadcast:   messages,
+		RedisClient: redisClient,
 	}
 }
 
 func (pool *Pool) Start() {
+
 	for {
 		select {
 		case client := <-pool.Register:
