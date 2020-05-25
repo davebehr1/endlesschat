@@ -4,7 +4,6 @@ import { connect, sendMsg } from "./api";
 import { Header } from "./api/Header";
 import { ChatHistory } from "./api/ChatHistory";
 import classes from "./app.module.css";
-import Modal from "./modules/modal";
 
 export let socket;
 function ChatApp({ socket }) {
