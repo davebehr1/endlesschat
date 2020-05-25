@@ -1,6 +1,6 @@
 // api/index.js
-var socket = new WebSocket("ws://localhost:5000/chat/david");
-
+// var socket = new WebSocket("ws://localhost:5000/chat/david");
+import { socket } from "../App";
 let connect = (cb) => {
   console.log("Attempting Connection...");
 

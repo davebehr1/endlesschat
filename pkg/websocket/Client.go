@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -18,6 +19,7 @@ type Client struct {
 type Message struct {
 	Type int    `json:"type"`
 	Body string `json:"body"`
+	User string `json:"user`
 }
 
 func (c *Client) Read(redisClient *redis.Client) {
@@ -33,8 +35,9 @@ func (c *Client) Read(redisClient *redis.Client) {
 			log.Println(err)
 			return
 		}
-		message := Message{Type: messageType, Body: string(p)}
-		err = redisClient.Publish(channel, string(p)).Err()
+		message := Message{Type: messageType, Body: string(p), User: c.Username}
+		textMessage, err := json.Marshal(message)
+		err = redisClient.Publish(channel, textMessage).Err()
 		if err != nil {
 			log.Println("could not publish to channel", err)
 		}

@@ -1,0 +1,26 @@
+.chatBubble {
+  border-radius: 5px;
+  box-shadow: 1px 4px 6px -3px #888888;
+  width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: white;
+}
+
+.infoBubble {
+  border-radius: 5px;
+  box-shadow: 1px 4px 6px -3px #888888;
+  width: 50vw;
+  display: flex;
+  align-self: flex-start;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: white;
+}
+.userName {
+  color: orange;
+  margin-bottom: 5px;
+}

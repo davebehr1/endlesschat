@@ -1,9 +1,10 @@
 import React from "react";
+import classes from "./header.module.css";
 
 function Header() {
   return (
-    <div className="header">
-      <h2>Realtime Chat App</h2>
+    <div className={classes.header}>
+      <h2 style={{ marginLeft: "10px" }}>Anonymous Chat Group</h2>
     </div>
   );
 }
