@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, redisClient *redis.Client) {
+func webSocketHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, redisClient *redis.Client) {
 	user := strings.TrimPrefix(r.URL.Path, "/chat/")
 
 	fmt.Println("WebSocket Endpoint Hit", user)
@@ -41,7 +41,7 @@ func setupRoutes(redisClient *redis.Client) {
 	http.HandleFunc("/chat/", func(w http.ResponseWriter, r *http.Request) {
 		// surveyID := r.URL.Query()["username"]
 		// fmt.Println(surveyID)
-		serveWs(pool, w, r, redisClient)
+		webSocketHandler(pool, w, r, redisClient)
 	})
 }
 
@@ -67,7 +67,10 @@ var serveCmd = &cobra.Command{
 
 		fmt.Println("Distributed Chat App v0.01")
 		setupRoutes(redisClient)
-		http.ListenAndServe(":5000", nil)
+
+		//http.ListenAndServeTLS(":5000", "https-server.crt", "https-server.key", nil)
+
+		http.ListenAndServeTLS(":5000", "anonymous.com+5.pem", "anonymous.com+5-key.pem", nil)
 
 	},
 }

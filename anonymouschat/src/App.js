@@ -7,6 +7,7 @@ import Modal from "./modules/modal";
 export let socket;
 function App() {
   const [open, setOpen] = useState(true);
+  const [tempUsername, setTempUsername] = useState();
   const [username, setUsername] = useState();
   const [error, setError] = useState();
 
@@ -14,7 +15,7 @@ function App() {
     console.log("hello");
     if (username) {
       console.log("setting socket", username);
-      socket = new WebSocket(`ws://localhost:5000/chat/${username}`);
+      socket = new WebSocket(`wss://localhost:5000/chat/${username}`);
     }
   }, [username]);
 
@@ -28,13 +29,16 @@ function App() {
               type="text"
               placeholder={"mr.robot92"}
               className={classes.aliasInput}
-              onBlur={(username) => setUsername(username.currentTarget.value)}
+              onBlur={(username) =>
+                setTempUsername(username.currentTarget.value)
+              }
             />
             {error && <div className={classes.error}>{error}</div>}
             <button
               className={classes.sendButton}
               onClick={() => {
-                if (username) {
+                if (tempUsername) {
+                  setUsername(tempUsername);
                   setTimeout(() => setOpen(false), 200);
                 } else {
                   setError("a chat name is required *");
