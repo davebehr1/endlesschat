@@ -1,3 +1,4 @@
+//-------------ALL OF THE CODE IN THIS FILE IS MY OWN------------------------
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import ChatApp from "./ChatApp";

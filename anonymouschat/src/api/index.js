@@ -1,5 +1,5 @@
-// api/index.js
-// var socket = new WebSocket("ws://localhost:5000/chat/david");
+//-------------THE CODE IN THIS FILE IS STANDARD FOR LISTENING FOR WEB SOCKET EVENTS---------------
+//-------------THE SEND MESSAGE FUNCTION ON LINE 25 is My own-----------------
 import { socket } from "../App";
 let connect = (cb) => {
   console.log("Attempting Connection...");

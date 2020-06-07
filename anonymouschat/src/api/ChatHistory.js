@@ -1,3 +1,4 @@
+//-------------ALL OF THE CODE IN THIS FILE IS MY OWN------------------------
 import React from "react";
 import { ChatBubble } from "../modules/chatBubble";
 import { InfoBubble } from "../modules/infoBubble";

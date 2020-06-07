@@ -1,3 +1,4 @@
+//-------------ALL OF THE CODE IN THIS FILE IS MY OWN------------------------
 import React from "react";
 import classes from "./chatBubble.module.css";
 const InfoBubble = ({ message }) => {
