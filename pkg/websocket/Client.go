@@ -1,3 +1,4 @@
+//-------------ALL OF THE CODE IN THIS FILE IS MY OWN------------------------
 package websocket
 
 import (
