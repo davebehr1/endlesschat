@@ -1,6 +1,6 @@
 # anonymous-chat
 
-##Instructrions
+## Instructions
 1. docker-compose up
 2. go run main.go serve
 3. cd anonymouschat
