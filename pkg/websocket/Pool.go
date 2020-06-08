@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"fmt"
-
 	"github.com/go-redis/redis"
 )
 
@@ -35,27 +34,21 @@ func (pool *Pool) Start() {
 	for {
 		select {
 		case client := <-pool.Register:
-			fmt.Println("CLIENT:", client.Username)
-
-			usernameTaken, err := pool.RedisClient.SIsMember(users, client.Username).Result()
-			if err != nil {
-				fmt.Println(err, "ERRRROR")
-			}
-			fmt.Println(usernameTaken)
 
 			pool.Clients[client] = true
-			fmt.Println("Size of Connection Pool: ", len(pool.Clients))
+
 			for client, _ := range pool.Clients {
 				fmt.Println(client)
 				client.Conn.WriteJSON(Message{Type: 1, Body: fmt.Sprintf(`%s joined the chat`, client.Username)})
 			}
 			break
 		case client := <-pool.Unregister:
-			delete(pool.Clients, client)
-			fmt.Println("Size of Connection Pool: ", len(pool.Clients))
+
+			pool.RedisClient.SRem(users, client.Username)
 			for client, _ := range pool.Clients {
 				client.Conn.WriteJSON(Message{Type: 1, Body: fmt.Sprintf(`%s left the chat`, client.Username)})
 			}
+			delete(pool.Clients, client)
 			break
 		case message := <-pool.Broadcast:
 			fmt.Println("Sending message to all clients in Pool:", message)

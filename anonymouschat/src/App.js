@@ -5,18 +5,29 @@ import ChatApp from "./ChatApp";
 import classes from "./app.module.css";
 import Modal from "./modules/modal";
 
-export let socket;
+export let socket = null;
 function App() {
   const [open, setOpen] = useState(true);
   const [tempUsername, setTempUsername] = useState();
   const [username, setUsername] = useState();
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("hello");
+    console.log(socket);
     if (username) {
-      console.log("setting socket", username);
-      socket = new WebSocket(`wss://localhost:5000/chat/${username}`);
+      fetch(`/username/${username}`)
+        .then(function (response) {
+          return response.json();
+        })
+        .then((resp) => {
+          if (resp.taken) {
+            setError(resp.message);
+          } else {
+            console.log("setting socket", username);
+            socket = new WebSocket(`wss://localhost:5000/anonChat/${username}`);
+            setTimeout(() => setOpen(false), 200);
+          }
+        });
     }
   }, [username]);
 
@@ -37,10 +48,9 @@ function App() {
             {error && <div className={classes.error}>{error}</div>}
             <button
               className={classes.sendButton}
-              onClick={() => {
-                if (tempUsername) {
+              onClick={(value) => {
+                if (value) {
                   setUsername(tempUsername);
-                  setTimeout(() => setOpen(false), 200);
                 } else {
                   setError("a chat name is required *");
                 }
@@ -51,6 +61,7 @@ function App() {
           </div>
         </Modal>
       )}
+      {console.log(socket)}
       {socket && <ChatApp socket={socket} />}
     </>
   );

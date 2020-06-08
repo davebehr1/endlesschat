@@ -39,10 +39,8 @@ func (c *Client) Read(redisClient *redis.Client) {
 		textMessage, err := json.Marshal(message)
 		err = redisClient.Publish(channel, textMessage).Err()
 		if err != nil {
-			log.Println("could not publish to channel", err)
+			log.Println("something went wrong publishing to channel", err)
 		}
-
-		// c.Pool.Broadcast <- message
-		fmt.Printf("Message Received: %+v\n", message)
+		fmt.Printf("Message Received: %+v", message)
 	}
 }
