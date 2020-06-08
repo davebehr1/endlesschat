@@ -1,7 +1,10 @@
+//-------------MOST OF THIS CODE IS MY OWN------------------------
+// ----- some inspiration was taken from https://itnext.io/lets-learn-how-to-to-build-a-chat-application-with-redis-websocket-and-go-7995b5c7b5e5--------
 package websocket
 
 import (
 	"fmt"
+
 	"github.com/go-redis/redis"
 )
 
