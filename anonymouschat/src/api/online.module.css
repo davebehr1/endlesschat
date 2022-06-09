@@ -1,0 +1,8 @@
+.online {
+    width: 20vw;
+    background-color: rgb(210, 210, 210);
+    color: white;
+    display: flex;
+    height: 92vh;
+    flex-direction: column;
+}

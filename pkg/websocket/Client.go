@@ -21,7 +21,13 @@ type Client struct {
 type Message struct {
 	Type int    `json:"type"`
 	Body string `json:"body"`
-	User string `json:"user`
+	From string `json:"from"`
+	To   string `json:"to"`
+}
+
+type webSocketMessage struct {
+	Message string `json:"message"`
+	To      string `json:"to"`
 }
 
 func (c *Client) Read(redisClient *redis.Client) {
@@ -32,13 +38,23 @@ func (c *Client) Read(redisClient *redis.Client) {
 	}()
 
 	for {
+		var wsMessage webSocketMessage
 		messageType, p, err := c.Conn.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		message := Message{Type: messageType, Body: string(p), User: c.Username}
+		err = json.Unmarshal(p, &wsMessage)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		message := Message{Type: messageType, Body: wsMessage.Message, From: c.Username, To: wsMessage.To}
 		textMessage, err := json.Marshal(message)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		err = redisClient.Publish(channel, textMessage).Err()
 		if err != nil {
 			log.Println("something went wrong publishing to channel", err)

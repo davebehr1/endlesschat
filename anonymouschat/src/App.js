@@ -24,7 +24,7 @@ function App() {
             setError(resp.message);
           } else {
             console.log("setting socket", username);
-            socket = new WebSocket(`wss://localhost:5000/chat/${username}`);
+            socket = new WebSocket(`ws://localhost:5002/chat/${username}`);
             setTimeout(() => setOpen(false), 200);
           }
         });

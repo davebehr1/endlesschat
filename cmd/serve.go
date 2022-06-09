@@ -16,7 +16,7 @@ import (
 )
 
 func wsHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, redisClient *redis.Client) {
-	user := strings.TrimPrefix(r.URL.Path, "/anonChat/")
+	user := strings.TrimPrefix(r.URL.Path, "/chat/")
 
 	fmt.Println("WebSocket Endpoint Hit", user)
 	conn, err := websocket.Upgrade(w, r)
@@ -69,7 +69,7 @@ func setupRoutes(redisClient *redis.Client) {
 	http.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
 		rw.Write([]byte("welcome to websocket server!"))
 	})
-	http.HandleFunc("/anonChat/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/chat/", func(w http.ResponseWriter, r *http.Request) {
 		wsHandler(pool, w, r, redisClient)
 	})
 }
@@ -104,7 +104,8 @@ var serveCmd = &cobra.Command{
 
 		//http.ListenAndServeTLS(":5000", "https-server.crt", "https-server.key", nil)
 
-		http.ListenAndServeTLS(":5000", "anonymous.com+5.pem", "anonymous.com+5-key.pem", nil)
+		//http.ListenAndServeTLS(":5002", "anonymous.com+5.pem", "anonymous.com+5-key.pem", nil)
+		http.ListenAndServe(":5002", nil)
 
 	},
 }

@@ -38,7 +38,7 @@ func bindEnv(key string, defaultValue interface{}, envName string) {
 
 func init() {
 
-	bindEnv("server.port", 5000, "SERVER_PORT")
+	bindEnv("server.port", 5002, "SERVER_PORT")
 	bindEnv("server.debugPort", 5001, "DEBUG_PORT")
 
 	bindEnv("redis.host", "localhost", "REDIS_HOST")
