@@ -15,19 +15,41 @@ function App() {
   useEffect(() => {
     console.log(socket);
     if (username) {
-      fetch(`/username/${username}`)
-        .then(function (response) {
-          return response.json();
-        })
-        .then((resp) => {
-          if (resp.taken) {
-            setError(resp.message);
-          } else {
-            console.log("setting socket", username);
-            socket = new WebSocket(`ws://localhost:5002/chat/${username}`);
-            setTimeout(() => setOpen(false), 200);
+      // fetch(`/username/${username}`)
+      //   .then(function (response) {
+      //     return response.json();
+      //   })
+      //   .then((resp) => {
+      //     if (resp.taken) {
+      //       setError(resp.message);
+      //     } else {
+      //       console.log("setting socket", username);
+      //       socket = new WebSocket(`ws://localhost:5002/chat/${username}`);
+      //       setTimeout(() => setOpen(false), 200);
+      //     }
+      //   });
+        fetch('/signin',{
+          method:"POST",
+          body: JSON.stringify({
+            username:username,
+            password:"password1"
+          }),
+          headers:{
+            'Content-type': 'application/json; charset=UTF-8',
           }
-        });
+        }).then((resp) => {
+          return resp.json()
+        }).then((resp) => {
+              console.log(resp)
+              if (resp.taken) {
+                setError(resp.message);
+              } else {
+                console.log("setting socket", username);
+                socket = new WebSocket(`ws://localhost:5002/ws`);
+                setTimeout(() => setOpen(false), 200);
+              }
+            }
+        )
     }
   }, [username]);
 
