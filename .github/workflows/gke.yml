@@ -63,7 +63,8 @@ jobs:
           context: ./simpleSite
           build-args: GITHUB_SHA="$GITHUB_SHA"
           # Note: tags has to be all lower-case
-          tags: davealonbehr/simple-site:latest,davealonbehr/simple-site:$GITHUB_SHA
+          tags: davealonbehr/simple-site:latest
+          # ,davealonbehr/simple-site:$GITHUB_SHA
           # build on feature branches, push only on main branch
           push: true
 
@@ -80,4 +81,4 @@ jobs:
       run: |-
         # replacing the image name in the k8s template
         kubectl apply -f k8s
-        kubectl set image deployments/client-deployment client=davealonbehr/simple-site:$GITHUB_SHA
+        kubectl set image deployments/client-deployment client=davealonbehr/simple-site:latest
