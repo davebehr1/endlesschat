@@ -62,9 +62,7 @@ jobs:
           # relative path to the place where source code with Dockerfile is located
           context: ./simpleSite
           # Note: tags has to be all lower-case
-          tags: |
-            davealonbehr/simple-site:latest
-            davealonbehr/simple-site:$GITHUB_SHA
+          tags: davealonbehr/simple-site:latest,davealonbehr/simple-site:$GITHUB_SHA
           # build on feature branches, push only on main branch
           push: true
 
