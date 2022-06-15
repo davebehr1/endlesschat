@@ -63,7 +63,7 @@ jobs:
           context: ./simpleSite
           build-args: GITHUB_SHA="$GITHUB_SHA"
           # Note: tags has to be all lower-case
-          tags: davealonbehr/simple-site:latest, davealonbehr/simple-site:$GITHUB_SHA
+          tags: davealonbehr/simple-site:latest,davealonbehr/simple-site:2
           # ,davealonbehr/simple-site:$GITHUB_SHA
           # build on feature branches, push only on main branch
           push: true
