@@ -56,17 +56,32 @@ jobs:
 
 
     # Build the Docker image
+#     - name: Build
+#       uses: docker/build-push-action@v2
+#       with:
+#           # relative path to the place where source code with Dockerfile is located
+#           context: ./simpleSite
+#           build-args: GITHUB_SHA="$GITHUB_SHA"
+#           # Note: tags has to be all lower-case
+#           tags: davealonbehr/simple-site:latest,davealonbehr/simple-site:2
+#           # ,davealonbehr/simple-site:$GITHUB_SHA
+#           # build on feature branches, push only on main branch
+#           push: true
+
     - name: Build
-      uses: docker/build-push-action@v2
-      with:
-          # relative path to the place where source code with Dockerfile is located
-          context: ./simpleSite
-          build-args: GITHUB_SHA="$GITHUB_SHA"
-          # Note: tags has to be all lower-case
-          tags: davealonbehr/simple-site:latest,davealonbehr/simple-site:2
-          # ,davealonbehr/simple-site:$GITHUB_SHA
-          # build on feature branches, push only on main branch
-          push: true
+      run: |-
+        docker build \
+          --tag "davealonbehr/simple-site:latest" \
+          --tag "davealonbehr/simple-site:$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          ./simpleSite
+
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: |-
+        docker push "davealonbehr/simple-site:latest"
+        docker push "davealonbehr/simple-site:$GITHUB_SHA"
 
 
     # Push the Docker image to Google Artifact Registry
