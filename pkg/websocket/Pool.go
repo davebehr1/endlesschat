@@ -3,7 +3,9 @@
 package websocket
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/go-redis/redis"
 )
@@ -38,11 +40,14 @@ func (pool *Pool) Start() {
 		select {
 		case client := <-pool.Register:
 
+			fmt.Println()
+			fmt.Printf("registered new user : %s\n\n", client.Username)
+
 			pool.Clients[client] = true
 
-			for client, _ := range pool.Clients {
+			for poolClient, _ := range pool.Clients {
 				fmt.Println(client)
-				client.Conn.WriteJSON(Message{Type: 1, Body: fmt.Sprintf(`%s joined the chat`, client.Username)})
+				poolClient.Conn.WriteJSON(Message{Type: 1, Body: fmt.Sprintf(`%s joined the chat`, client.Username)})
 			}
 			break
 		case client := <-pool.Unregister:
@@ -54,12 +59,24 @@ func (pool *Pool) Start() {
 			delete(pool.Clients, client)
 			break
 		case message := <-pool.Broadcast:
+			var newMessage Message
+			err := json.Unmarshal([]byte(message.Payload), &newMessage)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			fmt.Println()
+			fmt.Println("newMessage", newMessage)
+			fmt.Println()
 			fmt.Println("Sending message to all clients in Pool:", message)
 			for client, _ := range pool.Clients {
-				if err := client.Conn.WriteJSON(message.Payload); err != nil {
-					fmt.Println(err)
-					return
+				if client.Username == newMessage.To {
+					if err := client.Conn.WriteJSON(message.Payload); err != nil {
+						fmt.Println(err)
+						return
+					}
 				}
+
 			}
 		}
 	}

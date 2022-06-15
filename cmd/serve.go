@@ -3,22 +3,35 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/davebehr1/anonymous-chat/pkg"
+	"github.com/davebehr1/anonymous-chat/pkg/auth"
 	"github.com/davebehr1/anonymous-chat/pkg/websocket"
 	"github.com/go-redis/redis"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 
 func wsHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, redisClient *redis.Client) {
-	user := strings.TrimPrefix(r.URL.Path, "/anonChat/")
-
+	user := "david"
 	fmt.Println("WebSocket Endpoint Hit", user)
+
+	c, err := r.Cookie("token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			// If the cookie is not set, return an unauthorized status
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		// For any other type of error, return a bad request status
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	fmt.Println(c)
+
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
 		fmt.Fprintf(w, "%+v\n", err)
@@ -34,44 +47,47 @@ func wsHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, red
 	client.Read(redisClient)
 }
 
-type Response struct {
-	Message string `json:"message"`
-	Taken   bool   `json:"taken"`
-}
+func setupRoutes(r *mux.Router, redisClient *redis.Client) {
 
-func setupRoutes(redisClient *redis.Client) {
 	pool := websocket.NewPool(redisClient)
 	go pool.Start()
 
-	http.HandleFunc("/username/", func(rw http.ResponseWriter, req *http.Request) {
-		rw.Header().Set("Content-Type", "application/json")
+	// http.HandleFunc("/username/", func(rw http.ResponseWriter, req *http.Request) {
+	// 	rw.Header().Set("Content-Type", "application/json")
 
-		name := strings.TrimPrefix(req.URL.Path, "/username/")
+	// 	name := strings.TrimPrefix(req.URL.Path, "/username/")
 
-		fmt.Println(name)
-		usernameTaken, err := redisClient.SIsMember("chat-users", name).Result()
-		if err != nil {
-			log.Fatalf("could not retrieve value from set")
-		}
-		if usernameTaken {
+	// 	fmt.Println(name)
+	// 	usernameTaken, err := redisClient.SIsMember("chat-users", name).Result()
+	// 	if err != nil {
+	// 		log.Fatalf("could not retrieve value from set")
+	// 	}
+	// 	if usernameTaken {
 
-			response := Response{Taken: true, Message: "please enter another username"}
-			json.NewEncoder(rw).Encode(response)
-		} else {
-			pool.RedisClient.SAdd("chat-users", name)
-			response2 := Response{Taken: false, Message: "Welcome"}
-			json.NewEncoder(rw).Encode(response2)
+	// 		response := Response{Taken: true, Message: "please enter another username"}
+	// 		json.NewEncoder(rw).Encode(response)
+	// 	} else {
+	// 		pool.RedisClient.SAdd("chat-users", name)
+	// 		response2 := Response{Taken: false, Message: "Welcome"}
+	// 		json.NewEncoder(rw).Encode(response2)
 
-		}
+	// 	}
 
-	})
+	// })
 
-	http.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
+	r.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
 		rw.Write([]byte("welcome to websocket server!"))
 	})
-	http.HandleFunc("/anonChat/", func(w http.ResponseWriter, r *http.Request) {
-		wsHandler(pool, w, r, redisClient)
-	})
+
+	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { wsHandler(pool, w, r, redisClient) })
+
+	r.HandleFunc("/signin", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("yes boet")
+		auth.Signin(w, r, redisClient, pool)
+	}).Methods("POST")
+
+	// http.HandleFunc("/welcome", auth.Welcome)
+	// http.HandleFunc("/refresh", auth.Refresh)
 }
 
 // serveCmd represents the serve command
@@ -99,13 +115,15 @@ var serveCmd = &cobra.Command{
 
 		redisClient.FlushAll()
 
-		fmt.Println("Distributed Chat App v0.01")
-		setupRoutes(redisClient)
+		r := mux.NewRouter().StrictSlash(true)
+
+		setupRoutes(r, redisClient)
 
 		//http.ListenAndServeTLS(":5000", "https-server.crt", "https-server.key", nil)
 
-		http.ListenAndServeTLS(":5000", "anonymous.com+5.pem", "anonymous.com+5-key.pem", nil)
-
+		//http.ListenAndServeTLS(":5002", "anonymous.com+5.pem", "anonymous.com+5-key.pem", nil)
+		fmt.Println("Distributed Chat App v0.01")
+		http.ListenAndServe(":5002", r)
 	},
 }
 

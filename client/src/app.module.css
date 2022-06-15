@@ -4,7 +4,7 @@
   margin-top: 20px;
   height: 50px;
   font-size: 16px;
-  width: 90vw;
+  width: 90%;
   padding: 10px;
 }
 
@@ -16,6 +16,7 @@
   width: 90vw;
   padding: 10px;
 }
+
 .error {
   margin-top: 5px;
   color: #4555af;
@@ -32,15 +33,29 @@
   background-color: #50ca5e;
   color: white;
 }
+
 .messageContainer {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  width: 80vw;
+  position: absolute;
+  bottom: 0px;
 }
+
+.innerWrapper {
+  position: relative;
+  width: 80vw;
+}
+
 .modelContent {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   height: 100vh;
+}
+
+.bigWrapper {
+  display: flex;
 }

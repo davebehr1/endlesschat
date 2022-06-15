@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { connect, sendMsg } from "./api";
 import { Header } from "./api/Header";
+import { Online } from "./api/Online";
 import { ChatHistory } from "./api/ChatHistory";
 import classes from "./app.module.css";
 
@@ -20,6 +21,7 @@ function ChatApp({ socket }) {
         if (typeof mes === "string") {
           mes = JSON.parse(mes);
         }
+   
         setChatHistory([...chatHistory, mes]);
         console.log(chatHistory);
       });
@@ -34,6 +36,9 @@ function ChatApp({ socket }) {
   return (
     <div className="App">
       <Header />
+      <div className={classes.bigWrapper}>
+      <Online/>
+      <div className={classes.innerWrapper} >
       <ChatHistory chatHistory={chatHistory} />
       <div className={classes.messageContainer}>
         <input
@@ -45,6 +50,8 @@ function ChatApp({ socket }) {
         <button className={classes.sendButton} onClick={() => send()}>
           Send
         </button>
+      </div>
+      </div>
       </div>
     </div>
   );
