@@ -56,7 +56,7 @@ jobs:
 
     # Build the Docker image
     - name: Build
-      run: |
+      run: |-
         docker build
           -t "davealonbehr/simple-site:latest"
           -t "davealonbehr/simple-site:$GITHUB_SHA"
