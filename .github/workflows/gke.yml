@@ -61,6 +61,7 @@ jobs:
       with:
           # relative path to the place where source code with Dockerfile is located
           context: ./simpleSite
+          build-args: GITHUB_SHA="$GITHUB_SHA"
           # Note: tags has to be all lower-case
           tags: davealonbehr/simple-site:latest,davealonbehr/simple-site:$GITHUB_SHA
           # build on feature branches, push only on main branch
@@ -79,4 +80,4 @@ jobs:
       run: |-
         # replacing the image name in the k8s template
         kubectl apply -f k8s
-        kubectl set image deployments/client-deployment client=davealonbehr/simple-site:$SHA
+        kubectl set image deployments/client-deployment client=davealonbehr/simple-site:$GITHUB_SHA
