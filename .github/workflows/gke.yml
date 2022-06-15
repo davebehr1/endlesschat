@@ -35,15 +35,16 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
+    - uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
       
     - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
       with:
         service_account_key: ${{ secrets.GKE_SA_KEY }}
         project_id: ${{ secrets.GKE_PROJECT }}
-
-    - name: Docker configuration
-      run: |-
-        docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_TOKEN}}
         
     # Get the GKE credentials so we can deploy to the cluster
     - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
@@ -56,16 +57,23 @@ jobs:
 
     # Build the Docker image
     - name: Build
-      run: |-
-        docker build
-          -t "davealonbehr/simple-site:latest"
-          -t "davealonbehr/simple-site:$GITHUB_SHA"
-          -f ./simpleSite/Dockerfile
+      uses: docker/build-push-action@v2
+      with:
+          # relative path to the place where source code with Dockerfile is located
+          context: ./simpleSite
+          # Note: tags has to be all lower-case
+          tags: |
+            davealonbehr/simple-site:latest
+            davealonbehr/simple-site:$GITHUB_SHA
+          # build on feature branches, push only on main branch
+          push: true
+
+
     # Push the Docker image to Google Artifact Registry
-    - name: Publish
-      run: |-
-        docker push "davealonbehr/simple-site:latest"
-        docker push "davealonbehr/simple-site:$GITHUB_SHA"
+#     - name: Publish
+#       run: |-
+#         docker push "davealonbehr/simple-site:latest"
+#         docker push "davealonbehr/simple-site:$GITHUB_SHA"
         
         
     # Deploy the Docker image to the GKE cluster
