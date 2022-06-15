@@ -56,10 +56,10 @@ jobs:
 
     # Build the Docker image
     - name: Build
-      run: |-
-        docker build \
-          -t "davealonbehr/simple-site:latest" \
-          -t "davealonbehr/simple-site:$GITHUB_SHA" \
+      run: |
+        docker build
+          -t "davealonbehr/simple-site:latest"
+          -t "davealonbehr/simple-site:$GITHUB_SHA"
           -f ./simpleSite/Dockerfile
     # Push the Docker image to Google Artifact Registry
     - name: Publish
