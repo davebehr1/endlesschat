@@ -76,11 +76,20 @@ jobs:
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           ./client
+
+        docker build \
+          --tag "davealonbehr/simple-site:latest" \
+          --tag "davealonbehr/simple-site:$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          ./simpleSite
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
         docker push "davealonbehr/endless-chat-client:latest"
         docker push "davealonbehr/endless-chat-client:$GITHUB_SHA"
+        docker push "davealonbehr/simple-site:latest"
+        docker push "davealonbehr/simple-site:$GITHUB_SHA"
         
         
     # Deploy the Docker image to the GKE cluster
