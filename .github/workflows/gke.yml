@@ -78,6 +78,13 @@ jobs:
           ./client
 
         docker build \
+          --tag "davealonbehr/endless-chat-server:latest" \
+          --tag "davealonbehr/endless-chat-server:$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          ./server
+
+        docker build \
           --tag "davealonbehr/simple-site:latest" \
           --tag "davealonbehr/simple-site:$GITHUB_SHA" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
@@ -88,6 +95,10 @@ jobs:
       run: |-
         docker push "davealonbehr/endless-chat-client:latest"
         docker push "davealonbehr/endless-chat-client:$GITHUB_SHA"
+
+        docker push "davealonbehr/endless-chat-server:latest"
+        docker push "davealonbehr/endless-chat-server:$GITHUB_SHA"
+
         docker push "davealonbehr/simple-site:latest"
         docker push "davealonbehr/simple-site:$GITHUB_SHA"
         
@@ -98,3 +109,4 @@ jobs:
         # replacing the image name in the k8s template
         kubectl apply -f k8s
         kubectl set image deployments/client-deployment client=davealonbehr/endless-chat-client:$GITHUB_SHA
+        kubectl set image deployments/server-deployment server=davealonbehr/endless-chat-server:$GITHUB_SHA

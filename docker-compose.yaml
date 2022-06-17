@@ -1,5 +1,13 @@
 version: "3"
 services:
+
+  client:
+    image: dev-client
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
+
   server:
     image: chat_server
     ports:

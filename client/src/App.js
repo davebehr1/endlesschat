@@ -17,7 +17,7 @@ function App() {
     console.log(process.env.NODE_ENV);
     console.log(socket);
     if (username) {
-      fetch(`/username/${username}`)
+      fetch(`/v1/username/${username}`)
         .then(function (response) {
           return response.json();
         })
@@ -26,7 +26,7 @@ function App() {
             setError(resp.message);
           } else {
             console.log("setting socket", username);
-            socket = new WebSocket(`${wsUrl}/ws`);
+            socket = new WebSocket(`${wsUrl}/v1/ws`);
             console.log(socket);
             setTimeout(() => setOpen(false), 200);
           }
