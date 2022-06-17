@@ -40,12 +40,12 @@
     <property name="restartRequiresConfirmation" value="false" />
   </component>
   <component name="RunManager" selected="Go Build.serve">
-    <configuration name="go build github.com/davebehr1/anonymous-chat" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build github.com/davebehr1/endlesschat" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="anonymousChat" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/main.go" />
-      <package value="github.com/davebehr1/anonymous-chat" />
+      <package value="github.com/davebehr1/endlesschat" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
@@ -56,17 +56,17 @@
       <parameters value="serve" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/" />
-      <package value="github.com/davebehr1/anonymous-chat" />
+      <package value="github.com/davebehr1/endlesschat" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Go Build.serve" />
-      <item itemvalue="Go Build.go build github.com/davebehr1/anonymous-chat" />
+      <item itemvalue="Go Build.go build github.com/davebehr1/endlesschat" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build github.com/davebehr1/anonymous-chat" />
+        <item itemvalue="Go Build.go build github.com/davebehr1/endlesschat" />
       </list>
     </recent_temporary>
   </component>

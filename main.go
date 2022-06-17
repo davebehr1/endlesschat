@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/davebehr1/anonymous-chat/cmd"
+	"github.com/davebehr1/endlesschat/cmd"
 )
 
 func main() {
-
 	cmd.Execute()
-
 }

@@ -4,12 +4,12 @@ metadata:
   name: my-ingress
 spec:
   rules:
-  - http:
-      paths:
-      - path: /
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: client-cluster-ip-service
-            port:
-              number: 3000
+    - http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: client-cluster-ip-service
+                port:
+                  number: 3000

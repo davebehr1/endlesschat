@@ -3,34 +3,36 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/davebehr1/anonymous-chat/pkg"
-	"github.com/davebehr1/anonymous-chat/pkg/auth"
-	"github.com/davebehr1/anonymous-chat/pkg/websocket"
+	"github.com/davebehr1/endlesschat/pkg"
+	"github.com/davebehr1/endlesschat/pkg/auth"
+	"github.com/davebehr1/endlesschat/pkg/websocket"
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 
 func wsHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, redisClient *redis.Client) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	user := "david"
 	fmt.Println("WebSocket Endpoint Hit", user)
 
-	c, err := r.Cookie("token")
-	if err != nil {
-		if err == http.ErrNoCookie {
-			// If the cookie is not set, return an unauthorized status
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		// For any other type of error, return a bad request status
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	fmt.Println(c)
+	// c, err := r.Cookie("token")
+	// if err != nil {
+	// 	if err == http.ErrNoCookie {
+	// 		// If the cookie is not set, return an unauthorized status
+	// 		w.WriteHeader(http.StatusUnauthorized)
+	// 		return
+	// 	}
+	// 	// For any other type of error, return a bad request status
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	return
+	// }
+	// fmt.Println(c)
 
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
@@ -52,36 +54,41 @@ func setupRoutes(r *mux.Router, redisClient *redis.Client) {
 	pool := websocket.NewPool(redisClient)
 	go pool.Start()
 
-	// http.HandleFunc("/username/", func(rw http.ResponseWriter, req *http.Request) {
-	// 	rw.Header().Set("Content-Type", "application/json")
+	r.HandleFunc("/username/{name}", func(rw http.ResponseWriter, req *http.Request) {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		rw.Header().Set("Content-Type", "application/json")
 
-	// 	name := strings.TrimPrefix(req.URL.Path, "/username/")
+		vars := mux.Vars(req)
 
-	// 	fmt.Println(name)
-	// 	usernameTaken, err := redisClient.SIsMember("chat-users", name).Result()
-	// 	if err != nil {
-	// 		log.Fatalf("could not retrieve value from set")
-	// 	}
-	// 	if usernameTaken {
+		name := vars["name"]
 
-	// 		response := Response{Taken: true, Message: "please enter another username"}
-	// 		json.NewEncoder(rw).Encode(response)
-	// 	} else {
-	// 		pool.RedisClient.SAdd("chat-users", name)
-	// 		response2 := Response{Taken: false, Message: "Welcome"}
-	// 		json.NewEncoder(rw).Encode(response2)
+		fmt.Println(name)
+		usernameTaken, err := redisClient.SIsMember("chat-users", name).Result()
+		if err != nil {
+			log.Fatalf("could not retrieve value from set")
+		}
+		if usernameTaken {
 
-	// 	}
+			response := auth.Response{Taken: true, Message: "please enter another username"}
+			json.NewEncoder(rw).Encode(response)
+		} else {
+			pool.RedisClient.SAdd("chat-users", name)
+			response2 := auth.Response{Taken: false, Message: "Welcome"}
+			json.NewEncoder(rw).Encode(response2)
 
-	// })
+		}
+
+	})
 
 	r.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
 		rw.Write([]byte("welcome to websocket server!"))
 	})
 
 	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { wsHandler(pool, w, r, redisClient) })
 
 	r.HandleFunc("/signin", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		fmt.Println("yes boet")
 		auth.Signin(w, r, redisClient, pool)
 	}).Methods("POST")
@@ -115,7 +122,8 @@ var serveCmd = &cobra.Command{
 
 		redisClient.FlushAll()
 
-		r := mux.NewRouter().StrictSlash(true)
+		r := mux.NewRouter()
+		r.Use(mux.CORSMethodMiddleware(r))
 
 		setupRoutes(r, redisClient)
 

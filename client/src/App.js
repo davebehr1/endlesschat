@@ -4,6 +4,7 @@ import "./App.css";
 import ChatApp from "./ChatApp";
 import classes from "./app.module.css";
 import Modal from "./modules/modal";
+import { wsUrl } from "./const";
 
 export let socket = null;
 function App() {
@@ -13,43 +14,45 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log(process.env.NODE_ENV);
     console.log(socket);
     if (username) {
-      // fetch(`/username/${username}`)
-      //   .then(function (response) {
-      //     return response.json();
-      //   })
-      //   .then((resp) => {
-      //     if (resp.taken) {
-      //       setError(resp.message);
-      //     } else {
-      //       console.log("setting socket", username);
-      //       socket = new WebSocket(`ws://localhost:5002/chat/${username}`);
-      //       setTimeout(() => setOpen(false), 200);
-      //     }
-      //   });
-        fetch('/signin',{
-          method:"POST",
-          body: JSON.stringify({
-            username:username,
-            password:"password1"
-          }),
-          headers:{
-            'Content-type': 'application/json; charset=UTF-8',
+      fetch(`/username/${username}`)
+        .then(function (response) {
+          return response.json();
+        })
+        .then((resp) => {
+          if (resp.taken) {
+            setError(resp.message);
+          } else {
+            console.log("setting socket", username);
+            socket = new WebSocket(`${wsUrl}/ws`);
+            console.log(socket);
+            setTimeout(() => setOpen(false), 200);
           }
-        }).then((resp) => {
-          return resp.json()
-        }).then((resp) => {
-              console.log(resp)
-              if (resp.taken) {
-                setError(resp.message);
-              } else {
-                console.log("setting socket", username);
-                socket = new WebSocket(`ws://localhost:5002/ws`);
-                setTimeout(() => setOpen(false), 200);
-              }
-            }
-        )
+        });
+        // fetch('http://localhost:5002/signin',{
+        //   method:"POST",
+        //   body: JSON.stringify({
+        //     username:username,
+        //     password:"password1"
+        //   }),
+        //   headers:{
+        //     'Content-type': 'application/json; charset=UTF-8',
+        //   }
+        // }).then((resp) => {
+        //   return resp.json()
+        // }).then((resp) => {
+        //       console.log(resp)
+        //       if (resp.taken) {
+        //         setError(resp.message);
+        //       } else {
+        //         console.log("setting socket", username);
+        //         socket = new WebSocket(`ws://localhost:5002/ws`);
+        //         setTimeout(() => setOpen(false), 200);
+        //       }
+        //     }
+        // )
     }
   }, [username]);
 

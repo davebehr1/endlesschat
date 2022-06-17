@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/davebehr1/anonymous-chat/pkg/websocket"
+	"github.com/davebehr1/endlesschat/pkg/websocket"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-redis/redis"
 	//...
