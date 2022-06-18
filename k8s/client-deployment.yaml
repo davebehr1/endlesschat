@@ -18,8 +18,8 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: CHAT_SERVER_HOST
+            - name: REACT_APP_CHAT_SERVER_HOST
               value: server-cluster-ip-service
-            - name: CHAT_SERVER_PORT
+            - name: REACT_APP_CHAT_SERVER_PORT
               value: "5002"
           
