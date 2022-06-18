@@ -49,7 +49,7 @@ func wsHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request, red
 	client.Read(redisClient)
 }
 
-func setupRoutes(r *mux.Router, redisClient *redis.Client) {
+func setupRoutes(r *mux.Router, redisClient *redis.Client, logger *log.Logger) {
 
 	pool := websocket.NewPool(redisClient)
 	go pool.Start()
@@ -59,6 +59,8 @@ func setupRoutes(r *mux.Router, redisClient *redis.Client) {
 		rw.Header().Set("Content-Type", "application/json")
 
 		vars := mux.Vars(req)
+
+		logger.Printf("userame request: %s", vars)
 
 		name := vars["name"]
 
@@ -85,7 +87,11 @@ func setupRoutes(r *mux.Router, redisClient *redis.Client) {
 		rw.Write([]byte("welcome to websocket server!"))
 	})
 
-	r.HandleFunc("/v1/ws", func(w http.ResponseWriter, r *http.Request) { wsHandler(pool, w, r, redisClient) })
+	r.HandleFunc("/v1/ws", func(w http.ResponseWriter, r *http.Request) {
+		logger.Print(r.RequestURI)
+
+		wsHandler(pool, w, r, redisClient)
+	})
 
 	r.HandleFunc("/v1/signin", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -128,7 +134,7 @@ var serveCmd = &cobra.Command{
 		r := mux.NewRouter()
 		r.Use(mux.CORSMethodMiddleware(r))
 
-		setupRoutes(r, redisClient)
+		setupRoutes(r, redisClient, logger)
 
 		//http.ListenAndServeTLS(":5000", "https-server.crt", "https-server.key", nil)
 
