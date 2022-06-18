@@ -17,9 +17,17 @@ spec:
           image: davealonbehr/endless-chat-client:latest
           ports:
             - containerPort: 3000
-          env:
-            - name: REACT_APP_CHAT_SERVER_HOST
-              value: server-cluster-ip-service
-            - name: REACT_APP_CHAT_SERVER_PORT
-              value: "5002"
+          # env:
+          #   - name: REACT_APP_CHAT_SERVER_HOST
+          #     value: server-cluster-ip-service
+          #   - name: REACT_APP_CHAT_SERVER_PORT
+          #     value: "5002"
+          volumeMounts:
+            - name: client-env-file
+              mountPath: /app/.env
+              readOnly: true
+      volumes:
+        - name: client-env-file
+          secret:
+          name: client-config
           
