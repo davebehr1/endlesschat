@@ -4,6 +4,7 @@ import "./App.css";
 import ChatApp from "./ChatApp";
 import classes from "./app.module.css";
 import Modal from "./modules/modal";
+import {baseUrl} from "./consts"
 
 export let socket = null;
 function App() {
@@ -13,10 +14,10 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log(process.env.REACT_APP_CHAT_SERVER_HOST,process.env.REACT_APP_CHAT_SERVER_PORT);
+    console.log(baseUrl)
     console.log(socket);
     if (username) {
-      fetch(`http://${process.env.REACT_APP_CHAT_SERVER_HOST}:${process.env.REACT_APP_CHAT_SERVER_PORT}/v1/username/${username}`)
+      fetch(`/api/username/${username}`)
         .then(function (response) {
           return response.json();
         })
@@ -25,7 +26,7 @@ function App() {
             setError(resp.message);
           } else {
             console.log("setting socket", username);
-            socket = new WebSocket(`ws://${process.env.REACT_APP_CHAT_SERVER_HOST}:${process.env.REACT_APP_CHAT_SERVER_PORT}/v1/ws`);
+            socket = new WebSocket(`ws://${baseUrl}/api/ws`);
             console.log(socket);
             setTimeout(() => setOpen(false), 200);
           }

@@ -54,7 +54,7 @@ func setupRoutes(r *mux.Router, redisClient *redis.Client, logger *log.Logger) {
 	pool := websocket.NewPool(redisClient)
 	go pool.Start()
 
-	r.HandleFunc("/v1/username/{name}", func(rw http.ResponseWriter, req *http.Request) {
+	r.HandleFunc("/username/{name}", func(rw http.ResponseWriter, req *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Origin", "*")
 		rw.Header().Set("Content-Type", "application/json")
 
@@ -83,17 +83,18 @@ func setupRoutes(r *mux.Router, redisClient *redis.Client, logger *log.Logger) {
 	})
 
 	r.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
+		logger.Print(req.RequestURI)
 		rw.Header().Set("Access-Control-Allow-Origin", "*")
-		rw.Write([]byte("welcome to websocket server!"))
+		rw.Write([]byte(fmt.Sprintf("welcome to websocket server!: %s", req.RequestURI)))
 	})
 
-	r.HandleFunc("/v1/ws", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		logger.Print(r.RequestURI)
 
 		wsHandler(pool, w, r, redisClient)
 	})
 
-	r.HandleFunc("/v1/signin", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/signin", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		fmt.Println("yes boet")
 		auth.Signin(w, r, redisClient, pool)
