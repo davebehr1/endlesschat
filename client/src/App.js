@@ -4,7 +4,7 @@ import "./App.css";
 import ChatApp from "./ChatApp";
 import classes from "./app.module.css";
 import Modal from "./modules/modal";
-import { wsUrl } from "./const";
+import { baseUrl,wsUrl } from "./const";
 
 export let socket = null;
 function App() {
@@ -17,7 +17,7 @@ function App() {
     console.log(process.env.NODE_ENV);
     console.log(socket);
     if (username) {
-      fetch(`/v1/username/${username}`)
+      fetch(`${baseUrl}/v1/username/${username}`)
         .then(function (response) {
           return response.json();
         })
