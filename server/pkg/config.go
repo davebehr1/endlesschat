@@ -15,8 +15,9 @@ type ServerConfig struct {
 }
 
 type RedisConfig struct {
-	Host string
-	Port int
+	Host     string
+	Port     int
+	Password string
 }
 
 func GetConfig() (Config, error) {
@@ -43,4 +44,5 @@ func init() {
 
 	bindEnv("redis.host", "localhost", "REDIS_HOST")
 	bindEnv("redis.port", 6379, "REDIS_PORT")
+	bindEnv("redis.password", "", "REDIS_PASSWORD")
 }

@@ -15,5 +15,17 @@ spec:
       containers:
         - name: server
           image: davealonbehr/endless-chat-server:latest
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-test
+                  key: redis-password
+                  optional: false
+            - name: REDIS_HOST
+              value: redis-test-replicas
+            - name: REDIS_PORT
+              value: "6379"
+          
           ports:
             - containerPort: 5002

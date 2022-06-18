@@ -17,3 +17,9 @@ spec:
           image: davealonbehr/endless-chat-client:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: CHAT_SERVER_HOST
+              value: server-cluster-ip-service
+            - name: CHAT_SERVER_PORT
+              value: "5002"
+          

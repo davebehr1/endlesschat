@@ -104,10 +104,13 @@ var serveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg, err := pkg.GetConfig()
 
+		logger := log.Default()
+		logger.Printf("redis config: host %s, port %d, password %s", cfg.Redis.Host, cfg.Redis.Port, cfg.Redis.Password)
+
 		redisClient := redis.NewClient(&redis.Options{
 			Addr:     fmt.Sprintf("%s:%d", cfg.Redis.Host, cfg.Redis.Port),
-			Password: "", // no password set
-			DB:       0,  // use default DB
+			Password: cfg.Redis.Password, // no password set
+			DB:       0,                  // use default DB
 		})
 
 		defer func() {
