@@ -8,17 +8,22 @@ services:
     depends_on:
       - server
 
-  server:
-    image: chat_server
-    ports:
-      - 5002:5002
-    depends_on:
-      - redis
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-    links:
-      - redis
+    server:
+      image: chat_server
+      ports:
+        - 5002:5002
+      depends_on:
+        - redis
+        - db
+      environment:
+        REDIS_HOST: redis
+        REDIS_PORT: 6379
+        DB_HOST: db
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+      links:
+        - redis
+        - db
 
   redis:
     image: redis:5.0.7
@@ -28,7 +33,20 @@ services:
     volumes:
       - redis-data:/data
 
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+
 volumes:
   postgres-data:
   redis-data:
   minio-data:
+  db:
+    driver: local

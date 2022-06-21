@@ -7,12 +7,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/davebehr1/endlesschat/pkg"
 	"github.com/davebehr1/endlesschat/pkg/auth"
+	"github.com/davebehr1/endlesschat/pkg/storage/postgress"
 	"github.com/davebehr1/endlesschat/pkg/websocket"
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -131,6 +134,19 @@ var serveCmd = &cobra.Command{
 		}
 
 		redisClient.FlushAll()
+
+		var log = logrus.New()
+
+		loglevel, err := logrus.ParseLevel(cfg.LogLevel)
+		if err != nil {
+			log.WithError(err).Error("Invalid loglevel")
+			os.Exit(1)
+		}
+		log.SetLevel(loglevel)
+
+		postgresDB := postgress.New(log, pkg.GetPostgresConnectionString())
+
+		postgresDB.RunMigrations()
 
 		r := mux.NewRouter()
 		r.Use(mux.CORSMethodMiddleware(r))
