@@ -26,7 +26,7 @@ function App() {
             setError(resp.message);
           } else {
             console.log("setting socket", username);
-            socket = new WebSocket(`ws://${baseUrl}/api/ws`);
+            socket = new WebSocket(`wss://${baseUrl}/api/ws`);
             console.log(socket);
             setTimeout(() => setOpen(false), 200);
           }

@@ -153,9 +153,6 @@ var serveCmd = &cobra.Command{
 
 		setupRoutes(r, redisClient, logger)
 
-		//http.ListenAndServeTLS(":5000", "https-server.crt", "https-server.key", nil)
-
-		//http.ListenAndServeTLS(":5002", "anonymous.com+5.pem", "anonymous.com+5-key.pem", nil)
 		fmt.Println("Distributed Chat App v0.01")
 		http.ListenAndServe(":5002", r)
 	},
