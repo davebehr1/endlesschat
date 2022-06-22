@@ -42,6 +42,15 @@ jobs:
         credentials: ${{ secrets.GKE_SA_KEY }}
 
 
+    # - name: Build and push
+    #   uses: docker/build-push-action@v3
+    #   with:
+    #     context: .
+    #     file: "./client/Dockerfile"
+    #     push: true
+    #     tags: davealonbehr/endless-chat-client:latest
+    #     build-args: GITHUB_SHA="$GITHUB_SHA"
+
     - name: Build
       run: |-
         docker build \
