@@ -1,5 +1,3 @@
-//-------------MOST OF THIS CODE IS MY OWN------------------------
-//-------------alot of it is standard bootstrapping like setting up rest routes and a redis client---
 package cmd
 
 import (

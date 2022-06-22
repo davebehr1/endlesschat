@@ -36,7 +36,6 @@ func (db *PostgresDB) RunMigrations() error {
 	}
 
 	m, err := migrate.NewWithSourceInstance("iofs", d, db.connstr)
-	fmt.Println(m, err)
 	if err != nil {
 		return fmt.Errorf("failed to initialize: %w", err)
 	}

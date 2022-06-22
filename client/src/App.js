@@ -14,8 +14,6 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log(baseUrl)
-    console.log(socket);
     if (username) {
       fetch(`/api/username/${username}`)
         .then(function (response) {
@@ -25,9 +23,7 @@ function App() {
           if (resp.taken) {
             setError(resp.message);
           } else {
-            console.log("setting socket", username);
             socket = new WebSocket(`wss://${baseUrl}/api/ws`);
-            console.log(socket);
             setTimeout(() => setOpen(false), 200);
           }
         });
