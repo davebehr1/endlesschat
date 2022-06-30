@@ -27,6 +27,11 @@ function App() {
             setTimeout(() => setOpen(false), 200);
           }
         });
+        
+      fetch(`/v2/`)
+        .then(function (response) {
+          console.log(response.body);
+        });
         // fetch('http://localhost:5002/signin',{
         //   method:"POST",
         //   body: JSON.stringify({

@@ -66,6 +66,14 @@ jobs:
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           ./server
+
+         docker build \
+          --tag "davealonbehr/endless-chat-java-server:latest" \
+          --tag "davealonbehr/endless-chat-java-server:$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          ./chatserver
+        
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
@@ -74,6 +82,9 @@ jobs:
 
         docker push "davealonbehr/endless-chat-server:latest"
         docker push "davealonbehr/endless-chat-server:$GITHUB_SHA"   
+
+        docker push "davealonbehr/endless-chat-java-server:latest"
+        docker push "davealonbehr/endless-chat-java-server:$GITHUB_SHA" 
         
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
@@ -82,3 +93,4 @@ jobs:
         kubectl apply -f k8s
         kubectl set image deployments/client-deployment client=davealonbehr/endless-chat-client:$GITHUB_SHA
         kubectl set image deployments/server-deployment server=davealonbehr/endless-chat-server:$GITHUB_SHA
+        kubectl set image deployments/server-deployment server=davealonbehr/endless-chat-java-server:$GITHUB_SHA

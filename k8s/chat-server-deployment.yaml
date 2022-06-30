@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: chatserver
+  template:
+    metadata:
+      labels:
+        component: chatserver
+    spec:
+      containers:
+        - name: chatserver
+          image: davealonbehr/endless-chat-java-server:latest
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-test
+                  key: redis-password
+                  optional: false
+            - name: REDIS_HOST
+              value: redis-test-replicas
+            - name: REDIS_PORT
+              value: "6379"
+          
+          ports:
+            - containerPort: 8080
