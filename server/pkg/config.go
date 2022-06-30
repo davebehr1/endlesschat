@@ -56,7 +56,7 @@ func bindEnv(key string, defaultValue interface{}, envName string) {
 
 func init() {
 
-	bindEnv("server.port", 5002, "SERVER_PORT")
+	bindEnv("server.port", 5003, "SERVER_PORT")
 	bindEnv("server.debugPort", 5001, "DEBUG_PORT")
 
 	bindEnv("loglevel", "debug", "LOG_LEVEL")

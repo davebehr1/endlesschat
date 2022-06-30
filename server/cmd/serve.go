@@ -152,7 +152,7 @@ var serveCmd = &cobra.Command{
 		setupRoutes(r, redisClient, logger)
 
 		fmt.Println("Distributed Chat App v0.01")
-		http.ListenAndServe(":5002", r)
+		http.ListenAndServe(":5003", r)
 	},
 }
 

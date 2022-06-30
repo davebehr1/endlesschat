@@ -32,7 +32,14 @@ spec:
           service:
             name: server-cluster-ip-service
             port:
-              number: 5002
+              number: 5003
+      - path: /v2/?(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: chat-server-cluster-ip-service
+            port:
+              number: 8080
   - host: www.endlesschat.net
     http:
       paths:
@@ -49,12 +56,12 @@ spec:
           service:
             name: server-cluster-ip-service
             port:
-              number: 5002
+              number: 5003
       - path: /v2/?(.*)
         pathType: Prefix
         backend:
           service:
-            name: server-cluster-ip-service
+            name: chat-server-cluster-ip-service
             port:
               number: 8080
   

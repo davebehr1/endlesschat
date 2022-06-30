@@ -32,7 +32,7 @@ function App() {
         .then(function (response) {
           console.log(response.body);
         });
-        // fetch('http://localhost:5002/signin',{
+        // fetch('http://localhost:5001/signin',{
         //   method:"POST",
         //   body: JSON.stringify({
         //     username:username,
@@ -49,7 +49,7 @@ function App() {
         //         setError(resp.message);
         //       } else {
         //         console.log("setting socket", username);
-        //         socket = new WebSocket(`ws://localhost:5002/ws`);
+        //         socket = new WebSocket(`ws://localhost:5001/ws`);
         //         setTimeout(() => setOpen(false), 200);
         //       }
         //     }

@@ -4,4 +4,4 @@ metadata:
     name: client-config
 data:
     web.properties: |
-        window.API_URL= "server-cluster-ip-service:5002"
+        window.API_URL= "server-cluster-ip-service:5003"
