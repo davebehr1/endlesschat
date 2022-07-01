@@ -16,17 +16,17 @@ public class ChatserverApplication {
 	}
 
 
-	@Bean
-	public CommandLineRunner commandLineRunner(ApplicationContext ctx){
-		return args -> {
-			System.out.println("Lets inspect the beans provided by Spring boot");
-
-			String[] beanNames = ctx.getBeanDefinitionNames();
-			Arrays.sort(beanNames);
-			for (String beanName : beanNames){
-				System.out.println(beanName);
-			}
-		};
-	}
+//	@Bean
+//	public CommandLineRunner commandLineRunner(ApplicationContext ctx){
+//		return args -> {
+//			System.out.println("Lets inspect the beans provided by Spring boot");
+//
+//			String[] beanNames = ctx.getBeanDefinitionNames();
+//			Arrays.sort(beanNames);
+//			for (String beanName : beanNames){
+//				System.out.println(beanName);
+//			}
+//		};
+//	}
 
 }

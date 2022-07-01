@@ -13,6 +13,7 @@ import (
 	"github.com/davebehr1/endlesschat/pkg/websocket"
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -147,12 +148,18 @@ var serveCmd = &cobra.Command{
 		postgresDB.RunMigrations()
 
 		r := mux.NewRouter()
-		r.Use(mux.CORSMethodMiddleware(r))
+		// r.Use(mux.CORSMethodMiddleware(r))
+		c := cors.New(cors.Options{
+			AllowedOrigins:   []string{"http://localhost:3000"},
+			AllowCredentials: true,
+		})
+
+		handler := c.Handler(r)
 
 		setupRoutes(r, redisClient, logger)
 
 		fmt.Println("Distributed Chat App v0.01")
-		http.ListenAndServe(":5003", r)
+		http.ListenAndServe(":5003", handler)
 	},
 }
 

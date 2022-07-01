@@ -5,14 +5,14 @@ import { Header } from "./api/Header";
 import { Online } from "./api/Online";
 import { ChatHistory } from "./api/ChatHistory";
 import classes from "./app.module.css";
-
+import { Client } from '@stomp/stompjs';
 
 type props = {
-  socket: WebSocket;
+  socket: Client | null;
 }
 
 export interface Message {
-  data: string,
+  name: string,
 
 }
 
@@ -27,15 +27,10 @@ function ChatApp({ socket }: props) {
 
   useEffect(() => {
     if (socket) {
-      connect((msg: Message) => {
-        console.log("New Message:", msg.data);
-        console.log(typeof msg.data);
-        var mes = JSON.parse(msg.data);
-        if (typeof mes === "string") {
-          mes = JSON.parse(mes);
-        }
+      connect((msg: string) => {
+        console.log("New Message:", msg);
 
-        setChatHistory([...chatHistory, mes]);
+        setChatHistory([...chatHistory, { body: msg, User: "David" }]);
         console.log(chatHistory);
       });
     }

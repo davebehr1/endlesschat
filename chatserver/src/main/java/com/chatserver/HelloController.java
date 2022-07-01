@@ -13,12 +13,5 @@ public class HelloController {
     public String index() {
        return "Chat Server";
     }
-
-    @MessageMapping("/chat")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(Message message) throws Exception {
-        Thread.sleep(1000); // simulated delay
-        return new Greeting("Hello, " + message.getName() + "!");
-    }
 }
 

@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import ChatApp from "./ChatApp";
 import classes from "./app.module.css";
 import Modal from "./modules/modal";
-import { baseUrl } from "./consts"
+import { httpbaseUrl, wsbaseUrl } from "./consts"
+import { Client } from '@stomp/stompjs';
 
 
 
-export let socket: WebSocket | null = null;
+const SOCKET_URL = `${wsbaseUrl}/chat-websocket`;
+
+
+export let client: Client | null = null;
 function App() {
   const [open, setOpen] = useState(true);
   const [tempUsername, setTempUsername] = useState<String>();
@@ -16,7 +20,7 @@ function App() {
 
   useEffect(() => {
     if (username) {
-      fetch(`/api/username/${username}`)
+      fetch(`${httpbaseUrl}/username/${username}`)
         .then(function (response) {
           return response.json();
         })
@@ -24,7 +28,14 @@ function App() {
           if (resp.taken) {
             setError(resp.message);
           } else {
-            socket = new WebSocket(`wss://${baseUrl}/api/ws`);
+            client = new Client({
+              brokerURL: SOCKET_URL,
+              reconnectDelay: 5000,
+              heartbeatIncoming: 4000,
+              heartbeatOutgoing: 4000
+            });
+
+
             setTimeout(() => setOpen(false), 200);
           }
         });
@@ -88,8 +99,7 @@ function App() {
           </div>
         </Modal>
       )}
-      {console.log(socket)}
-      {socket && <ChatApp socket={socket} />}
+      {client && <ChatApp socket={client} />}
     </>
   );
 }
